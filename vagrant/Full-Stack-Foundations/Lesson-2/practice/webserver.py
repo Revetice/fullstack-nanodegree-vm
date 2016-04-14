@@ -1,6 +1,17 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Restaurant, Base, MenuItem
+
+engine = create_engine('sqlite:///restaurantmenu.db')
+Base.metadata.bind = (engine)
+
+DBsession = sessionmaker(bind=engine)
+session = DBsession()
+
+
 class webServerHandler(BaseHTTPRequestHandler):
   def do_GET(self):
     try:
@@ -9,7 +20,13 @@ class webServerHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
-        output = 'here are restaurants'
+        output = 'here are restaurants\n'
+        output += '<br>'
+
+        all_restaurants = session.query(Restaurant).all()
+        for res in all_restaurants:
+          output += res.name + '\n'
+          output += '<br>'
 
         self.wfile.write(output)
         print output
