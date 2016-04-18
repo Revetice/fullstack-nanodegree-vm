@@ -31,6 +31,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                 output += "</form></html></body>"
                 self.wfile.write(output)
                 return
+
             if self.path.endswith("/edit"):
                 restaurantIDPath = self.path.split("/")[2]
                 myRestaurantQuery = session.query(Restaurant).filter_by(
